@@ -42,24 +42,6 @@ endef
 $(eval $(call KernelPackage,atmtcp))
 
 
-define KernelPackage/appletalk
-  SUBMENU:=$(NETWORK_SUPPORT_MENU)
-  TITLE:=Appletalk protocol support
-  KCONFIG:= \
-        CONFIG_ATALK \
-        CONFIG_DEV_APPLETALK \
-        CONFIG_IPDDP=n
-  FILES:=$(LINUX_DIR)/net/appletalk/appletalk.ko
-  AUTOLOAD:=$(call AutoLoad,40,appletalk)
-endef
-
-define KernelPackage/appletalk/description
-  Kernel module for AppleTalk protocol.
-endef
-
-$(eval $(call KernelPackage,appletalk))
-
-
 define KernelPackage/bonding
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Ethernet bonding driver
@@ -111,7 +93,8 @@ define KernelPackage/vxlan
 	+IPV6:kmod-udptunnel6
   KCONFIG:=CONFIG_VXLAN
   FILES:= \
-	$(LINUX_DIR)/drivers/net/vxlan/vxlan.ko
+	$(LINUX_DIR)/drivers/net/vxlan.ko@lt5.5 \
+	$(LINUX_DIR)/drivers/net/vxlan/vxlan.ko@ge5.6
   AUTOLOAD:=$(call AutoLoad,13,vxlan)
 endef
 
@@ -928,6 +911,7 @@ $(eval $(call KernelPackage,sched-ipset))
 define KernelPackage/sched-mqprio-common
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=mqprio queue common dependencies support
+  DEPENDS:=@LINUX_6_6||LINUX_6_12
   HIDDEN:=1
   KCONFIG:=CONFIG_NET_SCH_MQPRIO_LIB
   FILES:=$(LINUX_DIR)/net/sched/sch_mqprio_lib.ko
@@ -943,7 +927,7 @@ $(eval $(call KernelPackage,sched-mqprio-common))
 define KernelPackage/sched-mqprio
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Multi-queue priority scheduler (MQPRIO)
-  DEPENDS:=+kmod-sched-core +kmod-sched-mqprio-common
+  DEPENDS:=+kmod-sched-core +(LINUX_6_6||LINUX_6_12):kmod-sched-mqprio-common
   KCONFIG:=CONFIG_NET_SCH_MQPRIO
   FILES:=$(LINUX_DIR)/net/sched/sch_mqprio.ko
   AUTOLOAD:=$(call AutoProbe, sch_mqprio)
@@ -1026,7 +1010,7 @@ endef
 $(eval $(call KernelPackage,bpf-test))
 
 
-SCHED_MODULES_EXTRA = sch_codel sch_gred sch_multiq sch_sfq sch_teql sch_fq sch_ets act_pedit act_simple act_skbmod act_csum em_cmp em_nbyte em_meta em_text
+SCHED_MODULES_EXTRA = sch_codel sch_gred sch_multiq sch_sfq sch_teql sch_fq act_pedit act_simple act_skbmod act_csum em_cmp em_nbyte em_meta em_text
 SCHED_FILES_EXTRA = $(foreach mod,$(SCHED_MODULES_EXTRA),$(LINUX_DIR)/net/sched/$(mod).ko)
 
 define KernelPackage/sched
@@ -1040,7 +1024,6 @@ define KernelPackage/sched
 	CONFIG_NET_SCH_SFQ \
 	CONFIG_NET_SCH_TEQL \
 	CONFIG_NET_SCH_FQ \
-	CONFIG_NET_SCH_ETS \
 	CONFIG_NET_ACT_PEDIT \
 	CONFIG_NET_ACT_SIMP \
 	CONFIG_NET_ACT_SKBMOD \
@@ -1263,18 +1246,6 @@ endef
 $(eval $(call KernelPackage,sctp))
 
 
-define KernelPackage/sctp-diag
-  SUBMENU:=$(NETWORK_SUPPORT_MENU)
-  TITLE:=SCTP diag support
-  DEPENDS:=+kmod-sctp +kmod-inet-diag
-  KCONFIG:=CONFIG_INET_SCTP_DIAG
-  FILES:= $(LINUX_DIR)/net/sctp/sctp_diag.ko
-  AUTOLOAD:= $(call AutoLoad,33,sctp_diag)
-endef
-
-$(eval $(call KernelPackage,sctp-diag))
-
-
 define KernelPackage/netem
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Network emulation functionality
@@ -1327,20 +1298,13 @@ define KernelPackage/rxrpc
   HIDDEN:=1
   KCONFIG:= \
 	CONFIG_AF_RXRPC \
-	CONFIG_AF_RXRPC_IPV6=y \
-	CONFIG_RXKAD \
+	CONFIG_RXKAD=m \
 	CONFIG_AF_RXRPC_DEBUG=n
   FILES:= \
 	$(LINUX_DIR)/net/rxrpc/rxrpc.ko
-  AUTOLOAD:=$(call AutoLoad,30,rxrpc)
-  DEPENDS:= \
-	+kmod-crypto-fcrypt \
-	+kmod-crypto-hmac \
-	+kmod-crypto-manager \
-	+kmod-crypto-md5 \
-	+kmod-crypto-pcbc \
-	+kmod-udptunnel4 \
-	+IPV6:kmod-udptunnel6
+  AUTOLOAD:=$(call AutoLoad,30,rxrpc.ko)
+  DEPENDS:= +kmod-crypto-manager +kmod-crypto-pcbc +kmod-crypto-fcrypt \
+    +kmod-udptunnel4 +kmod-udptunnel6
 endef
 
 define KernelPackage/rxrpc/description
@@ -1376,10 +1340,11 @@ $(eval $(call KernelPackage,mpls))
 define KernelPackage/9pnet
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Plan 9 Resource Sharing Support (9P2000)
+  DEPENDS:=+!LINUX_6_6:kmod-fs-netfs
   KCONFIG:= \
 	CONFIG_NET_9P \
 	CONFIG_NET_9P_DEBUG=n \
-	CONFIG_NET_9P_FD=n
+	CONFIG_NET_9P_FD=n@ge5.17
   FILES:= \
 	$(LINUX_DIR)/net/9p/9pnet.ko
   AUTOLOAD:=$(call AutoLoad,29,9pnet)
@@ -1593,6 +1558,7 @@ define KernelPackage/qrtr
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Qualcomm IPC Router support
   HIDDEN:=1
+  DEPENDS:=@!(LINUX_5_4||LINUX_5_10)
   KCONFIG:=CONFIG_QRTR
   FILES:= \
   $(LINUX_DIR)/net/qrtr/qrtr.ko
