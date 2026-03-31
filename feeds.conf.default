@@ -3,3 +3,4 @@ src-git luci https://github.com/liuxiaobing/luci.git
 src-git routing https://github.com/liuxiaobing/routing.git
 src-git telephony https://github.com/liuxiaobing/telephony.git
 src-git video https://github.com/liuxiaobing/video.git
+src-git smpackage https://github.com/liuxiaobing/small-package.git;main
