@@ -1,11 +1,6 @@
-src-git packages https://github.com/liuxiaobing/packages.git;openwrt-24.10
-# src-git packages https://github.com/liuxiaobing/packages.git;openwrt-25.12
-src-git luci https://github.com/liuxiaobing/luci.git;openwrt-24.10
-# src-git luci https://github.com/liuxiaobing/luci.git;openwrt-25.12
-src-git routing https://github.com/liuxiaobing/routing.git;openwrt-24.10
-# src-git routing https://github.com/liuxiaobing/routing.git;openwrt-25.12
+src-git packages https://github.com/liuxiaobing/packages.git
+src-git luci https://github.com/liuxiaobing/luci.git
+src-git routing https://github.com/liuxiaobing/routing.git
 src-git telephony https://github.com/liuxiaobing/telephony.git
-# src-git video https://github.com/liuxiaobing/video.git;openwrt-24.10
-# src-git video https://github.com/liuxiaobing/video.git;openwrt-25.12
 src-git smallpackages https://github.com/liuxiaobing/small-packages;main
 src-git smallpasswall https://github.com/liuxiaobing/small-passwall;main
