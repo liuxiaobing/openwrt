@@ -3,4 +3,4 @@ src-git luci https://github.com/liuxiaobing/luci.git;openwrt-24.10
 src-git routing https://github.com/liuxiaobing/routing.git;openwrt-24.10
 src-git telephony https://github.com/liuxiaobing/telephony.git
 src-git smallpackages https://github.com/liuxiaobing/small-packages.git
-src-git smallpasswall https://github.com/liuxiaobing/small-passwall;main
+src-git smallpasswall https://github.com/liuxiaobing/small-passwall.git
