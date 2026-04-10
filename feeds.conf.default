@@ -2,5 +2,5 @@ src-git packages https://github.com/liuxiaobing/packages.git;openwrt-25.12
 src-git luci https://github.com/liuxiaobing/luci.git;openwrt-25.12
 src-git routing https://github.com/liuxiaobing/routing.git;openwrt-25.12
 src-git telephony https://github.com/liuxiaobing/telephony.git
-src-git lenzo https://github.com/liuxiaobing/openwrt-packages.git
-src-git small https://github.com/liuxiaobing/small.git
+src-git lenzo https://github.com/liuxiaobing/openwrt-packages
+src-git small https://github.com/liuxiaobing/small
